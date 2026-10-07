@@ -12,6 +12,10 @@ All notable changes to this project are listed here. The format follows [Keep a 
 - Stage skills: each coding task is told which installed skill to use at each stage, failures ask for systematic debugging first, and review findings ask for the receiving-code-review skill. A switch in the pane turns it off.
 - The marketplace now carries the skill packs the stages use: superpowers, pr-review-toolkit, security-guidance and webapp-testing, each pinned to a commit of its own repository.
 
+### Fixed
+
+- The map no longer shows a broken image with Animation off. The still image is now encoded with plain characters only.
+
 ## [0.1.1] - 2026-10-07
 
 ### Fixed

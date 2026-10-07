@@ -268,6 +268,7 @@ const base = (p: string) => p.split(/[\\/]/).pop() ?? p
 const clean = (s: string) => s.trim().replace(/^\//, '').replace(/[^\w:.-]/g, '').slice(0, 48)
 const skillName = (s: string) => clean(s).split(':').pop() ?? ''
 const f = (v: number) => v.toFixed(1)
+const ascii = (s: string) => s.replace(/[\u0080-\u{10ffff}]/gu, c => `&#${c.codePointAt(0)};`)
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const pad = (v: number) => String(v).padStart(2, '0')
 const clock = (at: number) => {
@@ -926,7 +927,7 @@ function svg(n: NeuroNet, list: SkillSlot[], m: NeuroMeter, w: CiWatch | null, n
   )
 
   const defs = `<defs>${marker('m-mute', TRAFFIC)}${marker('m-acc', ACCENT)}${marker('m-bad', BAD)}</defs>`
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${defs}${out.join('')}</svg>`
+  return ascii(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${defs}${out.join('')}</svg>`)
 }
 
 export const register: Register = on => {
