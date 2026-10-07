@@ -125,6 +125,7 @@ declare module 'claude-code' {
       days: Record<string, NeuroDay>
       ci: CiWatch | null
       autoFix: boolean
+      animate: boolean
     }
   }
 }

@@ -80,6 +80,8 @@ A fix request (the button, or auto-fix) never pastes log text into the prompt. I
 
 The pane redraws only when something visible changes: a stage move, a CI state change, a new usage reading. Token counts on the map refresh at stage changes, daily totals are written in batches, and the map never redraws more than once every 1.5 seconds.
 
+By default the map is drawn as a still image, which never flashes while you scroll. The `Animation` switch draws it in its own frame instead, so the current node pulses and the arrows move; that frame can flash white for a moment when the pane scrolls or redraws.
+
 ## Storage
 
 | Key | Where | What |

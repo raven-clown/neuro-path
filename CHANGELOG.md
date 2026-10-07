@@ -4,6 +4,16 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-07
+
+### Fixed
+
+- The pane no longer flashes white while scrolling or redrawing. The map is drawn as a still image by default.
+
+### Added
+
+- An `Animation` switch in the pane that brings back the pulsing node and moving arrows, saved across sessions.
+
 ## [0.1.0] - 2026-10-07
 
 ### Added
@@ -19,5 +29,6 @@ All notable changes to this project are listed here. The format follows [Keep a 
 - Skill checkpoints that pin a skill to a stage.
 - Compact text view for the terminal.
 
-[Unreleased]: https://github.com/raven-clown/neuro-path/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/raven-clown/neuro-path/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/raven-clown/neuro-path/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/raven-clown/neuro-path/releases/tag/v0.1.0

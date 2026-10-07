@@ -206,6 +206,7 @@ const meter = atom({ plugin: 'neuro-path', key: 'meter' } as const, EMPTY_METER)
 const days = atom({ plugin: 'neuro-path', key: 'days' } as const, {} as Record<string, NeuroDay>)
 const ci = atom({ plugin: 'neuro-path', key: 'ci' } as const, null as CiWatch | null)
 const autoFix = atom({ plugin: 'neuro-path', key: 'autoFix' } as const, false)
+const animate = atom({ plugin: 'neuro-path', key: 'animate' } as const, false)
 
 const NET = { plugin: 'neuro-path', key: 'net' } as const
 const DAYS = { plugin: 'neuro-path', key: 'days' } as const
@@ -920,6 +921,8 @@ export const register: Register = on => {
     if (savedDays && typeof savedDays === 'object') await $.state.set(DAYS, savedDays as Record<string, NeuroDay>)
     const savedFix = await $.store.get('autoFix')
     if (typeof savedFix === 'boolean') await update($, autoFix, () => savedFix)
+    const savedAnim = await $.store.get('animate')
+    if (typeof savedAnim === 'boolean') await update($, animate, () => savedAnim)
     await update($, net, n => (n.edges && n.tok && Array.isArray(n.trail) ? n : { ...EMPTY, ...n, tok: n.tok ?? {}, runTok: n.runTok ?? 0, runStart: n.runStart ?? 0 }))
 
     const u = await $.session.usage()
@@ -1086,6 +1089,7 @@ export const register: Register = on => {
     const all = await read($, days)
     const w = await read($, ci)
     const isAuto = await read($, autoFix)
+    const isAnimated = await read($, animate)
     const now = await $.clock.now()
     const next = predict(n)
     const head = n.current ? `Now: ${LABEL[n.current]}${next ? `, next ${LABEL[next.to]}` : ''}` : 'Idle, waiting for a prompt'
@@ -1115,7 +1119,7 @@ export const register: Register = on => {
     } else if (e.surface === 'mobile') {
       const ui = $.ui.resolve(e)
       ;({ Box, Text, Button } = ui)
-      art = <ui.Svg source={svg(n, list, m, w, now)} alt={head} isInteractive />
+      art = <ui.Svg source={svg(n, list, m, w, now)} alt={head} isInteractive={isAnimated ? true : undefined} />
     } else {
       const ui = $.ui.resolve(e)
       ;({ Box, Text, Button, Select, Input } = ui)
@@ -1135,7 +1139,15 @@ export const register: Register = on => {
           lastSrcAt = now
         }
       }
-      art = <ui.Svg source={src} alt={head} width={width} height={Math.round((width * LAYOUT.h) / W)} isInteractive />
+      art = (
+        <ui.Svg
+          source={src}
+          alt={head}
+          width={width}
+          height={Math.round((width * LAYOUT.h) / W)}
+          isInteractive={isAnimated ? true : undefined}
+        />
+      )
     }
 
     const recent = n.events.slice(-10)
@@ -1305,7 +1317,18 @@ export const register: Register = on => {
             />
           )}
         </Box>
-        <Button key="reset" label="Reset session view" onPress={() => update($, net, () => EMPTY)} />
+        <Box flexDirection="row" flexWrap="wrap" gap={1}>
+          <Button
+            key="animate"
+            label={isAnimated ? 'Animation: on' : 'Animation: off'}
+            onPress={async () => {
+              await update($, animate, v => !v)
+              await $.store.set('animate', await read($, animate))
+            }}
+          />
+          <Button key="reset" label="Reset session view" onPress={() => update($, net, () => EMPTY)} />
+        </Box>
+        {isAnimated && <Text dimColor>Animation draws the map in its own frame, which can flash while scrolling.</Text>}
       </Box>
     )
   })
