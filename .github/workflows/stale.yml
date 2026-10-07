@@ -1,0 +1,28 @@
+name: Stale
+
+on:
+  schedule:
+    - cron: "41 2 * * 0"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 60
+          days-before-close: 14
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: pinned,security,help wanted,good first issue
+          exempt-pr-labels: pinned,security
+          stale-issue-message: This issue has had no activity for 60 days. It will close in 14 days unless there is new activity.
+          stale-pr-message: This pull request has had no activity for 60 days. It will close in 14 days unless there is new activity.
+          close-issue-message: Closed for inactivity. Reopen it any time with new details.
+          close-pr-message: Closed for inactivity. Feel free to reopen when you pick it up again.

@@ -1,0 +1,54 @@
+name: PR checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    name: changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require a changelog entry for plugin changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'skip-changelog') || github.event.pull_request.user.login == 'dependabot[bot]' }}
+        run: |
+          if [ "$SKIP" = "true" ]; then
+            echo "Changelog check skipped"
+            exit 0
+          fi
+          changed=$(git diff --name-only "$BASE" "$HEAD")
+          echo "$changed"
+          if echo "$changed" | grep -q '^plugins/' && ! echo "$changed" | grep -qx 'CHANGELOG.md'; then
+            echo "::error::Plugin files changed without a CHANGELOG.md entry. Add a line under Unreleased, or ask a maintainer for the skip-changelog label."
+            exit 1
+          fi
+
+  title:
+    name: title
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check pull request title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          len=${#TITLE}
+          if [ "$len" -gt 72 ]; then
+            echo "::error::Title is $len characters; keep it under 72 so the squash commit stays readable."
+            exit 1
+          fi
+          case "$TITLE" in
+            *.) echo "::error::Drop the period at the end of the title."; exit 1 ;;
+          esac
+          echo "Title ok"

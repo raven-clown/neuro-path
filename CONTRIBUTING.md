@@ -66,7 +66,31 @@ docs/                               docs and screenshots
 
 - One topic per pull request.
 - Commit messages in the imperative mood, under 72 characters for the first line: `Detect pnpm test as Test`.
-- Pull requests are squash-merged into `main`.
+- Pull requests are squash-merged into `main`; the PR title becomes the commit title.
+
+### Merge rules
+
+`main` is protected. A pull request can merge when:
+
+- the `validate`, `changelog` and `title` checks pass
+- it has one approving review
+- every review conversation is resolved
+- the branch is up to date with `main`
+
+Force pushes and branch deletion are blocked on `main`, and history stays linear.
+
+### Automation
+
+| Bot | What it does |
+| --- | --- |
+| Validate | Checks every JSON manifest, matching versions, and runs `claude plugin validate` on the marketplace and each plugin. |
+| PR checks | `changelog`: plugin changes need a line in CHANGELOG.md (maintainers can add the `skip-changelog` label). `title`: under 72 characters, no trailing period. |
+| CodeQL | Security and quality scan of the TypeScript on every PR, on `main`, and weekly. |
+| Labeler | Labels PRs `plugin`, `documentation` or `ci` from the files they touch. |
+| Welcome | Greets first-time issue authors and contributors. |
+| Dependabot | Monthly updates for GitHub Actions. Minor and patch updates are approved and merged automatically once checks pass; major updates wait for a person. |
+| Stale | Marks issues and PRs with no activity for 60 days, closes them 14 days later. `pinned`, `security`, `help wanted` and `good first issue` are never closed. |
+| Release | Publishes the GitHub release from CHANGELOG.md when a `vX.Y.Z` tag is pushed. |
 
 ## Releases
 
