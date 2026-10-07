@@ -88,7 +88,7 @@ Force pushes and branch deletion are blocked on `main`, and history stays linear
 | CodeQL | Security and quality scan of the TypeScript on every PR, on `main`, and weekly. |
 | Labeler | Labels PRs `plugin`, `documentation` or `ci` from the files they touch. |
 | Welcome | Greets first-time issue authors and contributors. |
-| Dependabot | Monthly updates for GitHub Actions. Minor and patch updates are approved and merged automatically once checks pass; major updates wait for a person. |
+| Dependabot | Monthly pull requests for GitHub Actions updates. Every action is pinned to a commit SHA, and each update waits for a maintainer review; nothing is merged automatically. |
 | Stale | Marks issues and PRs with no activity for 60 days, closes them 14 days later. `pinned`, `security`, `help wanted` and `good first issue` are never closed. |
 | Release | Publishes the GitHub release from CHANGELOG.md when a `vX.Y.Z` tag is pushed. |
 
