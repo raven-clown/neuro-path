@@ -36,6 +36,7 @@ jobs:
           node -e "
             const m = require('./.claude-plugin/marketplace.json')
             for (const p of m.plugins) {
+              if (typeof p.source !== 'string') { console.log(p.name + ' external, pinned to ' + p.source.sha); continue }
               const v = require('./' + p.source + '/.claude-plugin/plugin.json').version
               if (v !== p.version) { console.error(p.name + ': marketplace ' + p.version + ' != plugin ' + v); process.exit(1) }
               console.log(p.name + ' ' + v)

@@ -4,6 +4,14 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
+### Added
+
+- Live strip above the map, drawn at frame rate without reloading: a breathing current stage, a running clock, and the arriving signal timed by how long the previous stage took. CI shows a spinner with its running time.
+- Stage skills: each coding task is told which installed skill to use at each stage, failures ask for systematic debugging first, and review findings ask for the receiving-code-review skill. A switch in the pane turns it off.
+- The marketplace now carries the skill packs the stages use: superpowers, pr-review-toolkit, security-guidance and webapp-testing, each pinned to a commit of its own repository.
+
 ## [0.1.1] - 2026-10-07
 
 ### Fixed
@@ -29,6 +37,7 @@ All notable changes to this project are listed here. The format follows [Keep a 
 - Skill checkpoints that pin a skill to a stage.
 - Compact text view for the terminal.
 
-[Unreleased]: https://github.com/raven-clown/neuro-path/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/raven-clown/neuro-path/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/raven-clown/neuro-path/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/raven-clown/neuro-path/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/raven-clown/neuro-path/releases/tag/v0.1.0

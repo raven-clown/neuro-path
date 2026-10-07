@@ -1,6 +1,6 @@
 {
   "name": "neuro-path",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Live pipeline map for Claude Code: stage by stage from prompt to push, with time, tokens, usage limits, CI status and daily totals.",
   "author": {
     "name": "raven-clown",

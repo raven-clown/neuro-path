@@ -126,6 +126,7 @@ declare module 'claude-code' {
       ci: CiWatch | null
       autoFix: boolean
       animate: boolean
+      useSkills: boolean
     }
   }
 }
