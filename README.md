@@ -6,6 +6,7 @@
 See which stage your session is in, where it goes next, what each step cost, when CI breaks, and how close you are to your usage limits.
 
 [![Validate](https://github.com/raven-clown/neuro-path/actions/workflows/validate.yml/badge.svg)](https://github.com/raven-clown/neuro-path/actions/workflows/validate.yml)
+[![CodeQL](https://github.com/raven-clown/neuro-path/actions/workflows/codeql.yml/badge.svg)](https://github.com/raven-clown/neuro-path/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/raven-clown/neuro-path?color=d97757)](https://github.com/raven-clown/neuro-path/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-a29e94.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-2.1.286%2B-d97757.svg)](https://docs.claude.com/en/docs/claude-code)

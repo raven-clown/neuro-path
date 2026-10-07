@@ -1,0 +1,24 @@
+name: Welcome
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/first-interaction@3c71ce730280171fd1cfb57c00c774f8998586f7 # v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Thanks for opening your first issue here. If it is about a step landing in the wrong stage, the exact command or tool call helps the most.
+          pr-message: |
+            Thanks for your first pull request. The checks below run on every PR: plugin validation, a changelog entry for plugin changes, a title check and CodeQL. A maintainer will review it soon.
