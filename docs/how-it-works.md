@@ -64,6 +64,8 @@ A review that reports findings sends the run back to Code.
 
 ## Skills
 
+With `Stage skills: on` (the default), every prompt that changes code carries a short playbook naming the skill to use at each stage. It only names skills, so a pack that is not installed is skipped. When a step fails, its result carries one line asking for systematic debugging before a fix, and review findings ask for the receiving-code-review skill.
+
 Known skills are tied to stages, for example `brainstorming` and `writing-plans` to Plan, `test-driven-development` to Test, `systematic-debugging` to Debug, `requesting-code-review` to Review, `verification-before-completion` to Verify, `webapp-testing` to Preview. Any other skill can be pinned to a stage from the pane.
 
 ## Usage forecast
@@ -75,6 +77,10 @@ Each rate-limit window keeps the readings taken since its last reset. Once there
 After a successful `git push` or `gh pr create`, the plugin resolves the commit and branch in the working directory and polls `gh run list --commit <sha>` every 15 seconds, plus `gh run view --json jobs` for runs that are still going. It stops when every run has finished, after 3 minutes with no runs, or after 90 minutes. Remotes that are not on GitHub are skipped for now.
 
 A fix request (the button, or auto-fix) never pastes log text into the prompt. It sends the run id, branch, commit and job name, each stripped to plain characters, and asks the session to read the log with `gh run view <id> --log-failed` as untrusted data. It does not ask for a commit or push.
+
+## Live strip
+
+The strip above the map is a surface module (`hooks/live.tsx`) that draws on the surface's own frame clock. New data reaches the running instance as props, so it never reloads and never flashes. It is available on the desktop app and the terminal.
 
 ## Redraws
 

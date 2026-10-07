@@ -207,6 +207,22 @@ const days = atom({ plugin: 'neuro-path', key: 'days' } as const, {} as Record<s
 const ci = atom({ plugin: 'neuro-path', key: 'ci' } as const, null as CiWatch | null)
 const autoFix = atom({ plugin: 'neuro-path', key: 'autoFix' } as const, false)
 const animate = atom({ plugin: 'neuro-path', key: 'animate' } as const, false)
+const useSkills = atom({ plugin: 'neuro-path', key: 'useSkills' } as const, true)
+
+const PLAYBOOK = [
+  'Workflow skills are assigned to stages. When this task changes code, use the ones that appear in your skill list at these points without asking first:',
+  '- Plan: superpowers:brainstorming for a new feature or a change in behavior, then superpowers:writing-plans for multi-step work.',
+  '- Branch: superpowers:using-git-worktrees when starting isolated feature work.',
+  '- Code and Test: superpowers:test-driven-development when adding a feature or fixing a bug.',
+  '- Debug: superpowers:systematic-debugging on any failing test, build or check, before proposing a fix.',
+  '- Review: superpowers:requesting-code-review or pr-review-toolkit:review-pr after a significant change; superpowers:receiving-code-review when acting on review feedback.',
+  '- Verify: superpowers:verification-before-completion before saying the work is done, fixed or passing, and before committing.',
+  '- Pull request: superpowers:finishing-a-development-branch once the implementation is complete and tests pass.',
+  '- Preview: example-skills:webapp-testing or webapp-testing:webapp-testing to check a web UI in a browser.',
+  'Skip all of this for questions that change no code.',
+].join('\n')
+const FAIL_NUDGE = 'This step failed. If superpowers:systematic-debugging is in your skill list, use it before changing code.'
+const REVIEW_NUDGE = 'The review reported findings. If superpowers:receiving-code-review is in your skill list, use it before acting on them.'
 
 const NET = { plugin: 'neuro-path', key: 'net' } as const
 const DAYS = { plugin: 'neuro-path', key: 'days' } as const
@@ -921,6 +937,8 @@ export const register: Register = on => {
     if (savedDays && typeof savedDays === 'object') await $.state.set(DAYS, savedDays as Record<string, NeuroDay>)
     const savedFix = await $.store.get('autoFix')
     if (typeof savedFix === 'boolean') await update($, autoFix, () => savedFix)
+    const savedSkills = await $.store.get('useSkills')
+    if (typeof savedSkills === 'boolean') await update($, useSkills, () => savedSkills)
     const savedAnim = await $.store.get('animate')
     if (typeof savedAnim === 'boolean') await update($, animate, () => savedAnim)
     await update($, net, n => (n.edges && n.tok && Array.isArray(n.trail) ? n : { ...EMPTY, ...n, tok: n.tok ?? {}, runTok: n.runTok ?? 0, runStart: n.runStart ?? 0 }))
@@ -1010,8 +1028,9 @@ export const register: Register = on => {
     await flushDays($)
     $.ui.status('neuro: User')
     const list = await read($, slots)
-    if (list.length === 0) return next(e)
-    return next({ ...e, context: [...(e.context ?? []), plan(list)] })
+    const extra = [...((await read($, useSkills)) ? [PLAYBOOK] : []), ...(list.length > 0 ? [plan(list)] : [])]
+    if (extra.length === 0) return next(e)
+    return next({ ...e, context: [...(e.context ?? []), ...extra] })
   })
 
   on('tool.call', async ($, e, next) => {
@@ -1043,11 +1062,13 @@ export const register: Register = on => {
       await update($, net, move({ node: 'debug', label: `${LABEL[hit.node]} failed` }, back, true))
       queueDay(dayPatch(back, { loop: true }))
       $.ui.status(`neuro: ${LABEL[hit.node]} failed, debugging`)
+      if (await read($, useSkills)) return { ...ran, context: [...(ran.context ?? []), FAIL_NUDGE] }
     } else if (e.tool === 'ReportFindings' && findings(args) > 0) {
       const count = findings(args)
       await update($, net, move({ node: 'code', label: `${count} review finding${count === 1 ? '' : 's'} to fix` }, await $.clock.now(), true))
       queueDay(dayPatch(at, { loop: true }))
       $.ui.status('neuro: Review found issues, back to Code')
+      if (await read($, useSkills)) return { ...ran, context: [...(ran.context ?? []), REVIEW_NUDGE] }
     } else if (ran.isError !== true) {
       await update($, net, cleared(hit.node))
       const command = typeof args.command === 'string' ? args.command : ''
@@ -1090,9 +1111,27 @@ export const register: Register = on => {
     const w = await read($, ci)
     const isAuto = await read($, autoFix)
     const isAnimated = await read($, animate)
+    const isSkilled = await read($, useSkills)
     const now = await $.clock.now()
     const next = predict(n)
     const head = n.current ? `Now: ${LABEL[n.current]}${next ? `, next ${LABEL[next.to]}` : ''}` : 'Idle, waiting for a prompt'
+
+    const lastSig = n.trail[n.trail.length - 1]
+    const ciNote = ciSummary(w)
+    const live = {
+      stage: n.current ? LABEL[n.current] : 'Idle',
+      color: n.current === 'debug' ? BAD : ACCENT,
+      since: n.enteredAt || now,
+      next: next && n.current && next.to !== n.current ? LABEL[next.to] : '',
+      from: lastSig ? LABEL[lastSig.from] : '',
+      at: lastSig?.at ?? 0,
+      ms: lastSig?.ms ?? 0,
+      isFail: lastSig?.isFail ?? false,
+      ci: ciNote ? ciNote.text.replace(/^[●○✓✗]\s*/, '') : '',
+      ciColor: ciNote?.color ?? INK3,
+      ciSince: w?.startedAt ?? now,
+      isCiLive: w?.state === 'running' || w?.state === 'waiting',
+    }
 
     let art
     let Box
@@ -1105,9 +1144,7 @@ export const register: Register = on => {
       ;({ Box, Text, Button, Select, Input } = ui)
       art = (
         <ui.Box flexDirection="column">
-          <ui.Text bold color={n.failed ? BAD : ACCENT}>
-            {head}
-          </ui.Text>
+          <ui.Client key="live" module="./live.tsx" props={live} />
           {ORDER.map(st => (
             <ui.Text color={n.failed === st ? BAD : n.current === st ? ACCENT : undefined} dimColor={!(n.counts[st] ?? 0) && n.current !== st}>
               {n.current === st ? '◉' : next?.to === st ? '◌' : (n.counts[st] ?? 0) > 0 ? '●' : '○'} {LABEL[st]}
@@ -1140,13 +1177,16 @@ export const register: Register = on => {
         }
       }
       art = (
-        <ui.Svg
-          source={src}
-          alt={head}
-          width={width}
-          height={Math.round((width * LAYOUT.h) / W)}
-          isInteractive={isAnimated ? true : undefined}
-        />
+        <ui.Box flexDirection="column" gap={1}>
+          {'Client' in ui && <ui.Client key="live" module="./live.tsx" props={live} />}
+          <ui.Svg
+            source={src}
+            alt={head}
+            width={width}
+            height={Math.round((width * LAYOUT.h) / W)}
+            isInteractive={isAnimated ? true : undefined}
+          />
+        </ui.Box>
       )
     }
 
@@ -1259,8 +1299,23 @@ export const register: Register = on => {
         </Box>
 
         <Box flexDirection="column" gap={1}>
-          <Text bold>Skill checkpoints</Text>
-          <Text dimColor>Pin a skill to a stage; it is asked for at that point on every coding task.</Text>
+          <Text bold>Skills</Text>
+          <Box flexDirection="row" flexWrap="wrap" gap={1}>
+            <Button
+              key="use-skills"
+              label={isSkilled ? 'Stage skills: on' : 'Stage skills: off'}
+              onPress={async () => {
+                await update($, useSkills, v => !v)
+                await $.store.set('useSkills', await read($, useSkills))
+              }}
+            />
+          </Box>
+          <Text dimColor>
+            {isSkilled
+              ? 'Each coding task is told which installed skill to use at each stage, and failures ask for systematic debugging first.'
+              : 'Stage skills are shown on the map but not requested.'}
+          </Text>
+          <Text dimColor>Pin any other skill to a stage below.</Text>
           {list.length > 0 && (
             <Box flexDirection="row" flexWrap="wrap" gap={1}>
               {list.map(s => (

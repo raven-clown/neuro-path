@@ -5,17 +5,65 @@
     "url": "https://github.com/raven-clown"
   },
   "metadata": {
-    "description": "Mods for Claude Code by raven-clown",
-    "version": "0.1.1"
+    "description": "Neuro Path for Claude Code, plus the skill packs it assigns to each stage",
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "neuro-path",
       "source": "./plugins/neuro-path",
       "description": "Live pipeline map: stage by stage from prompt to push, with time, tokens, usage limits, CI status and daily totals.",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "category": "productivity",
       "keywords": ["pipeline", "workflow", "visualization", "ci", "usage"]
+    },
+    {
+      "name": "superpowers",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/obra/superpowers.git",
+        "sha": "8ca22dba9a94f28898bbce59f2537ff4d87c747d"
+      },
+      "description": "Plan, Branch, Code, Test, Debug, Review, Verify and Pull request skills: brainstorming, writing-plans, test-driven-development, systematic-debugging, code review and verification. By Jesse Vincent, MIT.",
+      "homepage": "https://github.com/obra/superpowers",
+      "category": "development"
+    },
+    {
+      "name": "pr-review-toolkit",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/pr-review-toolkit",
+        "sha": "6eb6a30bf024b182d418d3bbd11f156e360365af"
+      },
+      "description": "Review stage: focused reviewers for code, tests, comments, error handling and types, plus /review-pr.",
+      "homepage": "https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit",
+      "category": "development"
+    },
+    {
+      "name": "security-guidance",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/security-guidance",
+        "sha": "6eb6a30bf024b182d418d3bbd11f156e360365af"
+      },
+      "description": "Security stage: reviews each commit for vulnerabilities and flags them before they ship.",
+      "homepage": "https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance",
+      "category": "security"
+    },
+    {
+      "name": "webapp-testing",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/anthropics/skills.git",
+        "sha": "683bc88e56f3e09ba94f7055977f3d3aa499f202"
+      },
+      "strict": false,
+      "skills": ["./skills/webapp-testing"],
+      "description": "Preview stage: drive and check a local web app in a real browser with Playwright.",
+      "homepage": "https://github.com/anthropics/skills/tree/main/skills/webapp-testing",
+      "category": "testing"
     }
   ]
 }

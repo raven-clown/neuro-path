@@ -33,7 +33,8 @@ Neuro Path draws that as a map in a side pane. Each stage is a node, every move 
 | Ship | Commit, Push, Pull request, CI, Preview, Merge, Release, Deploy |
 | Deliver | Report, then back to User |
 
-- The current stage pulses. A dashed arrow points at the stage that most likely comes next, based on the routes this session has already taken.
+- A live strip above the map runs at frame rate without ever reloading: the current stage breathes, a clock counts the time in it, and a signal travels in from the previous stage at a speed set by how long that stage really took.
+- A dashed arrow points at the stage that most likely comes next, based on the routes this session has already taken.
 - Stages light up the moment the step is decided, not after it finishes, so a question waiting for your answer or a command waiting for approval shows as the current stage.
 - A failed test, build, lint, push or CI run draws a red dashed line back to Debug, then on to Code, and the next arrow points at the step to retry.
 - Every row shows the real time spent and the tokens used in that stage.
@@ -44,7 +45,7 @@ Neuro Path draws that as a map in a side pane. Each stage is a node, every move 
 
 **Daily totals.** Active time, tokens split into input, output and cache, cost, runs, fix loops, and the stages that took the most time and tokens. The last 30 days are kept on your machine; the pane shows the last 7.
 
-**Skill checkpoints.** Pin any skill to a stage (for example `/simplify` after Code). From then on every coding task is asked to run it at that point, and the map shows when it did.
+**Skills at every stage.** Each stage has skills assigned to it: brainstorming and writing-plans for Plan, test-driven-development for Test, systematic-debugging for Debug, code review for Review, verification-before-completion for Verify, webapp-testing for Preview, and more. With `Stage skills: on`, every coding task is told which installed skill to use at which point, and a failed step asks for systematic debugging before any fix. The map lights each skill as it is used. You can also pin any other skill to a stage, for example `/simplify` after Code.
 
 <table>
 <tr>
@@ -65,6 +66,24 @@ Neuro Path is a Claude Code plugin, published from this repository as a plugin m
 /plugin marketplace add raven-clown/neuro-path
 /plugin install neuro-path@neuro-path
 ```
+
+The same marketplace carries the skill packs the stages use, so everything works right away:
+
+```
+/plugin install superpowers@neuro-path
+/plugin install pr-review-toolkit@neuro-path
+/plugin install security-guidance@neuro-path
+/plugin install webapp-testing@neuro-path
+```
+
+| Pack | Stages | Source |
+| --- | --- | --- |
+| superpowers | Plan, Branch, Code, Test, Debug, Review, Verify, Pull request | [obra/superpowers](https://github.com/obra/superpowers) |
+| pr-review-toolkit | Review | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit) |
+| security-guidance | Security | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance) |
+| webapp-testing | Preview | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/webapp-testing) |
+
+The packs are installed straight from their own repositories, pinned to a reviewed commit. Neuro Path works without them; the stages simply have no skill to ask for.
 
 Restart the session, then open the pane any time with:
 
