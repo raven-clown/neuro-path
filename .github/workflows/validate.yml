@@ -1,0 +1,50 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check JSON files
+        run: |
+          for f in .claude-plugin/marketplace.json plugins/*/.claude-plugin/plugin.json plugins/*/hooks/hooks.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f', 'utf8'))" && echo "ok $f"
+          done
+
+      - name: Check versions match
+        run: |
+          node -e "
+            const m = require('./.claude-plugin/marketplace.json')
+            for (const p of m.plugins) {
+              const v = require('./' + p.source + '/.claude-plugin/plugin.json').version
+              if (v !== p.version) { console.error(p.name + ': marketplace ' + p.version + ' != plugin ' + v); process.exit(1) }
+              console.log(p.name + ' ' + v)
+            }
+          "
+
+      - name: Validate marketplace and plugins
+        run: |
+          npx -y @anthropic-ai/claude-code@latest plugin validate .
+          for d in plugins/*/; do
+            npx -y @anthropic-ai/claude-code@latest plugin validate "$d"
+          done

@@ -1,0 +1,21 @@
+{
+  "name": "neuro-path",
+  "owner": {
+    "name": "raven-clown",
+    "url": "https://github.com/raven-clown"
+  },
+  "metadata": {
+    "description": "Mods for Claude Code by raven-clown",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "neuro-path",
+      "source": "./plugins/neuro-path",
+      "description": "Live pipeline map: stage by stage from prompt to push, with time, tokens, usage limits, CI status and daily totals.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "keywords": ["pipeline", "workflow", "visualization", "ci", "usage"]
+    }
+  ]
+}

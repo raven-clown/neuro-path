@@ -1,0 +1,14 @@
+{
+  "name": "neuro-path",
+  "version": "0.1.0",
+  "description": "Live pipeline map for Claude Code: stage by stage from prompt to push, with time, tokens, usage limits, CI status and daily totals.",
+  "author": {
+    "name": "raven-clown",
+    "url": "https://github.com/raven-clown"
+  },
+  "homepage": "https://github.com/raven-clown/neuro-path",
+  "repository": "https://github.com/raven-clown/neuro-path",
+  "license": "MIT",
+  "keywords": ["pipeline", "workflow", "visualization", "ci", "github-actions", "usage", "tokens"],
+  "types": "./types/index.d.ts"
+}

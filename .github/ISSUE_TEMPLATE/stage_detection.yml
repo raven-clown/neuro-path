@@ -1,0 +1,42 @@
+name: Wrong stage
+description: A tool call or command shows up in the wrong stage, or not at all
+labels: ["stage-detection"]
+body:
+  - type: markdown
+    attributes:
+      value: These reports are the easiest to fix and help everyone. Paste the exact command or tool call if you can.
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or tool call
+      description: The shell command, or the tool name and its main argument.
+      render: shell
+      placeholder: pnpm vitest run --coverage
+    validations:
+      required: true
+  - type: input
+    id: got
+    attributes:
+      label: Stage shown
+      placeholder: Build, or nothing
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Stage expected
+      placeholder: Test
+    validations:
+      required: true
+  - type: dropdown
+    id: failure
+    attributes:
+      label: Was a failure handled wrong?
+      options:
+        - No, only the stage
+        - It bounced to Debug but should not have
+        - It failed but did not bounce to Debug
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else

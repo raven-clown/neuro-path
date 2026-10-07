@@ -1,0 +1,7 @@
+node_modules/
+.claude/
+plugins/*/.claude-plugin/types/
+notes.md
+*.log
+.DS_Store
+Thumbs.db
