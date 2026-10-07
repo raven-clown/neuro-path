@@ -74,6 +74,8 @@ Each rate-limit window keeps the readings taken since its last reset. Once there
 
 After a successful `git push` or `gh pr create`, the plugin resolves the commit and branch in the working directory and polls `gh run list --commit <sha>` every 15 seconds, plus `gh run view --json jobs` for runs that are still going. It stops when every run has finished, after 3 minutes with no runs, or after 90 minutes. Remotes that are not on GitHub are skipped for now.
 
+A fix request (the button, or auto-fix) never pastes log text into the prompt. It sends the run id, branch, commit and job name, each stripped to plain characters, and asks the session to read the log with `gh run view <id> --log-failed` as untrusted data. It does not ask for a commit or push.
+
 ## Redraws
 
 The pane redraws only when something visible changes: a stage move, a CI state change, a new usage reading. Token counts on the map refresh at stage changes, daily totals are written in batches, and the map never redraws more than once every 1.5 seconds.

@@ -39,7 +39,7 @@ Neuro Path draws that as a map in a side pane. Each stage is a node, every move 
 
 **Usage, with a forecast.** Context window fill, the 5-hour and weekly limits, when each one resets, and whether your current pace runs out before the reset (`full ~14:52` in red) or not (`pace OK`).
 
-**GitHub Actions without watching the tab.** After a push or a new pull request the pane follows the workflow runs for that commit, job by job. When a job fails you get a toast, the map bounces to Debug, and one button sends the failing log tail back into the session to be fixed. An optional auto-fix switch does that without waiting for you.
+**GitHub Actions without watching the tab.** After a push or a new pull request the pane follows the workflow runs for that commit, job by job. When a job fails you get a toast, the map bounces to Debug, and one button asks the session to read that job's log and fix the cause. An optional auto-fix switch does that without waiting for you. The request carries only the run id, branch, commit and job name; the log itself is read as a tool result and treated as data, and nothing is committed or pushed unless you asked for it.
 
 **Daily totals.** Active time, tokens split into input, output and cache, cost, runs, fix loops, and the stages that took the most time and tokens. The last 30 days are kept on your machine; the pane shows the last 7.
 
