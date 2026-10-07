@@ -49,7 +49,8 @@ const Live: ClientModule<LiveProps, LiveState> = (p, s) => {
   const breathe = (Math.sin(now / 420) + 1) / 2
   const dot = mix(tone, BG, 0.1 + 0.6 * breathe)
 
-  const width = Math.max(16, (s.columns || 48) - p.from.length - p.stage.length - 2)
+  const room = (s.columns || 40) - p.from.length - p.stage.length - 4
+  const width = Math.max(8, Math.min(28, room))
   const t = p.from ? Math.min(1, (now - p.at) / pace(p.ms)) : 1
   const head = t * (width - 1)
   const track = Array.from({ length: width }, (_, i) => {
@@ -72,13 +73,13 @@ const Live: ClientModule<LiveProps, LiveState> = (p, s) => {
         </Box>
         <Text color={INK3}>{dur(now - p.since)}</Text>
       </Box>
-      <Box flexDirection="row">
+      <Text>
         {p.from && <Text color={INK3}>{p.from} </Text>}
         {track.map(c => (
           <Text color={c.color}>{c.ch}</Text>
         ))}
         <Text color={t >= 1 ? tone : INK3}> {p.stage}</Text>
-      </Box>
+      </Text>
       {p.ci && (
         <Box flexDirection="row">
           <Text color={p.ciColor}>
